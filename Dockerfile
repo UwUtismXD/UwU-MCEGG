@@ -1,26 +1,20 @@
 # Use official OpenJDK 21 slim image as base
-FROM openjdk:21-jdk-slim
+FROM ghcr.io/pterodactyl/yolks:java_21
 
-# Install curl and jq
-RUN apt-get update && apt-get install -y curl jq && rm -rf /var/lib/apt/lists/*
-
+USER root
+RUN apt-get update -y && apt-get install -y curl jq
+USER container
 # Set working directory
-WORKDIR /minecraft-server
+WORKDIR /home/container
 
 # Copy the server start script
-COPY t.sh .
-
-# Make the script executable
-RUN chmod +x t.sh
+COPY t.sh /t.sh
 
 # Copy entrypoint script
-COPY entrypoint.sh .
-
-# Make entrypoint executable
-RUN chmod +x entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 # Expose Minecraft default port
 EXPOSE 25565
 
 # Set entrypoint to the entrypoint script
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
